@@ -1,0 +1,53 @@
+{% extends 'core/base_list.html' %}
+
+{% block title %}Alunos - Agenda Escolar{% endblock %}
+
+{% block table_headers %}
+    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Foto</th>
+    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Nome</th>
+    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Responsável</th>
+    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Telefone</th>
+    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Email</th>
+    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Turma</th>
+    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Data Nasc.</th>
+    <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+        <span class="sr-only">Ações</span>
+    </th>
+{% endblock %}
+
+{% block table_body %}
+    {% for aluno in object_list %}
+    <tr>
+        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
+            {% if aluno.foto %}
+            <img src="{{ aluno.foto.url }}" alt="{{ aluno.nome }}" class="h-10 w-10 rounded-full object-cover">
+            {% else %}
+            <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                <i class="fas fa-user text-gray-400"></i>
+            </div>
+            {% endif %}
+        </td>
+        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ aluno.nome }}</td>
+        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ aluno.responsavel }}</td>
+        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ aluno.telefone }}</td>
+        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ aluno.email }}</td>
+        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ aluno.turma.nome|default:"Sem turma" }}</td>
+        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ aluno.data_nascimento|date:"d/m/Y" }}</td>
+        <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+            <a href="{% url 'aluno_detail' aluno.id %}" class="text-indigo-600 hover:text-indigo-900 mr-4">
+                <i class="fas fa-eye"></i>
+            </a>
+            <a href="{% url 'aluno_edit' aluno.id %}" class="text-indigo-600 hover:text-indigo-900 mr-4">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'aluno_delete' aluno.id %}" class="text-red-600 hover:text-red-900">
+                <i class="fas fa-trash"></i>
+            </a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="8" class="px-3 py-4 text-sm text-gray-500 text-center">Nenhum aluno cadastrado.</td>
+    </tr>
+    {% endfor %}
+{% endblock %} 

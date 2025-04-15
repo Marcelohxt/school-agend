@@ -1,0 +1,88 @@
+{% extends 'core/base_form.html' %}
+
+{% block title %}{{ title }} - Agenda Escolar{% endblock %}
+
+{% block form_content %}
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        
+        <div>
+            <label for="{{ form.nome.id_for_label }}" class="block text-sm font-medium text-gray-700">Nome do Aluno</label>
+            {{ form.nome }}
+            {% if form.nome.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.nome.errors }}</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="{{ form.data_nascimento.id_for_label }}" class="block text-sm font-medium text-gray-700">Data de Nascimento</label>
+            {{ form.data_nascimento }}
+            {% if form.data_nascimento.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.data_nascimento.errors }}</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="{{ form.responsavel.id_for_label }}" class="block text-sm font-medium text-gray-700">Responsável</label>
+            {{ form.responsavel }}
+            {% if form.responsavel.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.responsavel.errors }}</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="{{ form.telefone.id_for_label }}" class="block text-sm font-medium text-gray-700">Telefone</label>
+            {{ form.telefone }}
+            {% if form.telefone.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.telefone.errors }}</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700">Email</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.email.errors }}</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="{{ form.turma.id_for_label }}" class="block text-sm font-medium text-gray-700">Turma</label>
+            {{ form.turma }}
+            {% if form.turma.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.turma.errors }}</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="{{ form.foto.id_for_label }}" class="block text-sm font-medium text-gray-700">Foto do Aluno</label>
+            {{ form.foto }}
+            {% if form.foto.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.foto.errors }}</p>
+            {% endif %}
+            {% if form.instance.foto %}
+                <div class="mt-2">
+                    <img src="{{ form.instance.foto.url }}" alt="Foto atual" class="h-32 w-32 object-cover rounded-lg">
+                </div>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="{{ form.observacoes.id_for_label }}" class="block text-sm font-medium text-gray-700">Observações</label>
+            {{ form.observacoes }}
+            {% if form.observacoes.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.observacoes.errors }}</p>
+            {% endif %}
+        </div>
+
+        <div class="flex justify-end space-x-4 pt-4">
+            <a href="{% url 'aluno_list' %}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                Cancelar
+            </a>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                Salvar
+            </button>
+        </div>
+    </form>
+{% endblock %}
+ 

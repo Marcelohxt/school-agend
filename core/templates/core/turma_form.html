@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto">
+        <div class="bg-red-500 shadow-md rounded-lg p-6">
+            <h1 class="text-2xl font-bold text-gray-800 mb-6">{{ title }}</h1>
+
+            {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                <div class="p-4 rounded {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if form.errors %}
+            <div class="mb-4 p-4 bg-red-100 text-red-700 rounded">
+                <h2 class="font-bold mb-2">Por favor, corrija os seguintes erros:</h2>
+                <ul class="list-disc list-inside">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <li>{{ field|title }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <div>
+                    <label for="{{ form.nome.id_for_label }}" class="block text-sm font-medium text-white">Nome da Turma</label>
+                    {{ form.nome }}
+                    {% if form.nome.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.nome.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label for="{{ form.ano.id_for_label }}" class="block text-sm font-medium text-white">Ano</label>
+                    {{ form.ano }}
+                    {% if form.ano.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.ano.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label for="{{ form.periodo.id_for_label }}" class="block text-sm font-medium text-white">Período</label>
+                    {{ form.periodo }}
+                    {% if form.periodo.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.periodo.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label for="{{ form.professor.id_for_label }}" class="block text-sm font-medium text-white">Professor</label>
+                    {{ form.professor }}
+                    {% if form.professor.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.professor.errors }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="flex justify-end space-x-4 pt-4">
+                    <a href="{% url 'turmas' %}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                        Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

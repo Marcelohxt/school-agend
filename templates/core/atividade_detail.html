@@ -1,0 +1,77 @@
+{% extends 'core/base_detail.html' %}
+
+{% block title %}{{ atividade.get_tipo_display }} - {{ atividade.turma.nome }} - Agenda Escolar{% endblock %}
+
+{% block detail_content %}
+    <div class="grid grid-cols-2 gap-4">
+        <div class="col-span-2">
+            <h2 class="text-lg font-medium text-gray-900">Informações da Atividade</h2>
+            <dl class="mt-2 grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Turma</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ atividade.turma.nome }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Tipo</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ atividade.get_tipo_display }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Data</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ atividade.data|date:"d/m/Y" }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Horário</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ atividade.hora_inicio|time:"H:i" }} - {{ atividade.hora_fim|time:"H:i" }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Professor</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ atividade.professor.get_full_name|default:"Não definido" }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Data de Criação</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ atividade.data_criacao|date:"d/m/Y H:i" }}</dd>
+                </div>
+                <div class="sm:col-span-2">
+                    <dt class="text-sm font-medium text-gray-500">Descrição</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ atividade.descricao }}</dd>
+                </div>
+                {% if atividade.observacoes %}
+                <div class="sm:col-span-2">
+                    <dt class="text-sm font-medium text-gray-500">Observações</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ atividade.observacoes }}</dd>
+                </div>
+                {% endif %}
+            </dl>
+        </div>
+
+        <div class="col-span-2">
+            <h2 class="text-lg font-medium text-gray-900">Alunos da Turma</h2>
+            <div class="mt-2 overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+                <table class="min-w-full divide-y divide-gray-300">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Nome</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Responsável</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Telefone</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Email</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                        {% for aluno in atividade.turma.alunos.all %}
+                        <tr>
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">{{ aluno.nome }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ aluno.responsavel }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ aluno.telefone }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ aluno.email }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="px-3 py-4 text-sm text-gray-500 text-center">Nenhum aluno cadastrado nesta turma.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

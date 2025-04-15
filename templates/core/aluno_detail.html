@@ -1,0 +1,115 @@
+{% extends 'core/base_detail.html' %}
+
+{% block title %}{{ aluno.nome }} - Agenda Escolar{% endblock %}
+
+{% block detail_content %}
+    <div class="grid grid-cols-2 gap-4">
+        <div class="col-span-2">
+            <div class="flex items-center space-x-4 mb-6">
+                {% if aluno.foto %}
+                <img src="{{ aluno.foto.url }}" alt="{{ aluno.nome }}" class="h-24 w-24 rounded-full object-cover">
+                {% else %}
+                <div class="h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center">
+                    <i class="fas fa-user text-gray-400 text-4xl"></i>
+                </div>
+                {% endif %}
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">{{ aluno.nome }}</h2>
+                    <p class="text-gray-500">Turma: {{ aluno.turma.nome|default:"Sem turma" }}</p>
+                </div>
+            </div>
+
+            <h2 class="text-lg font-medium text-gray-900">Informações do Aluno</h2>
+            <dl class="mt-2 grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Nome</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ aluno.nome }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Data de Nascimento</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ aluno.data_nascimento|date:"d/m/Y" }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Responsável</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ aluno.responsavel }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Telefone</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ aluno.telefone }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Email</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ aluno.email }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Turma</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ aluno.turma.nome|default:"Sem turma" }}</dd>
+                </div>
+                <div class="sm:col-span-2">
+                    <dt class="text-sm font-medium text-gray-500">Observações</dt>
+                    <dd class="mt-1 text-sm text-gray-900">{{ aluno.observacoes|default:"Nenhuma observação" }}</dd>
+                </div>
+            </dl>
+        </div>
+
+        <div class="col-span-2">
+            <h2 class="text-lg font-medium text-gray-900">Atividades Recentes</h2>
+            <div class="mt-2 overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+                <table class="min-w-full divide-y divide-gray-300">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Data</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Tipo</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Descrição</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Horário</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                        {% for atividade in aluno.turma.atividades.all|slice:":5" %}
+                        <tr>
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900">{{ atividade.data|date:"d/m/Y" }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ atividade.get_tipo_display }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ atividade.descricao }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ atividade.hora_inicio|time:"H:i" }} - {{ atividade.hora_fim|time:"H:i" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="px-3 py-4 text-sm text-gray-500 text-center">Nenhuma atividade cadastrada para esta turma.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-span-2">
+            <h2 class="text-lg font-medium text-gray-900">Comunicados Recentes</h2>
+            <div class="mt-2 overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+                <table class="min-w-full divide-y divide-gray-300">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Data</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Título</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Conteúdo</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Validade</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                        {% for comunicado in aluno.turma.comunicados.all|slice:":5" %}
+                        <tr>
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900">{{ comunicado.data_envio|date:"d/m/Y" }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">{{ comunicado.titulo }}</td>
+                            <td class="px-3 py-4 text-sm text-gray-500">{{ comunicado.conteudo|truncatechars:50 }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ comunicado.data_validade|date:"d/m/Y" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="px-3 py-4 text-sm text-gray-500 text-center">Nenhum comunicado cadastrado para esta turma.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

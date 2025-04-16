@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Cabeçalho -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{{ title }}</h1>
+        <a href="{% url 'professores' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+    </div>
+
+    <!-- Formulário -->
+    <div class="card shadow">
+        <div class="card-body">
+            <form method="post" class="needs-validation" novalidate enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="row">
+                    <!-- Nome -->
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.nome.id_for_label }}" class="form-label">Nome</label>
+                        {% render_field form.nome class="form-control" placeholder="Nome do professor" %}
+                        {% if form.nome.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.nome.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                        {% render_field form.email class="form-control" placeholder="email@exemplo.com" %}
+                        {% if form.email.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.email.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Telefone -->
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.telefone.id_for_label }}" class="form-label">Telefone</label>
+                        {% render_field form.telefone class="form-control" placeholder="(00) 00000-0000" %}
+                        {% if form.telefone.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.telefone.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Tipo -->
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.tipo.id_for_label }}" class="form-label">Tipo</label>
+                        {% render_field form.tipo class="form-select" %}
+                        {% if form.tipo.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.tipo.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Professor Titular (apenas para auxiliares) -->
+                    <div class="col-md-6 mb-3" id="div_professor_titular" style="display: none;">
+                        <label for="{{ form.professor_titular.id_for_label }}" class="form-label">Professor Titular</label>
+                        {% render_field form.professor_titular class="form-select" %}
+                        {% if form.professor_titular.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.professor_titular.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Turma -->
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.turma.id_for_label }}" class="form-label">Turma</label>
+                        {% render_field form.turma class="form-select" %}
+                        {% if form.turma.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.turma.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Foto -->
+                    <div class="col-md-12 mb-3">
+                        <label for="{{ form.foto.id_for_label }}" class="form-label">Foto</label>
+                        {% render_field form.foto class="form-control" %}
+                        {% if form.foto.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.foto.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                        {% if form.instance.foto %}
+                            <div class="mt-2">
+                                <img src="{{ form.instance.foto.url }}" alt="Foto atual" class="img-thumbnail" style="max-height: 150px;">
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-3">
+                    <a href="{% url 'professores' %}" class="btn btn-secondary me-2">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tipoSelect = document.getElementById('{{ form.tipo.id_for_label }}');
+        const divProfessorTitular = document.getElementById('div_professor_titular');
+        
+        function toggleProfessorTitular() {
+            if (tipoSelect.value === 'AUXILIAR') {
+                divProfessorTitular.style.display = 'block';
+            } else {
+                divProfessorTitular.style.display = 'none';
+            }
+        }
+        
+        tipoSelect.addEventListener('change', toggleProfessorTitular);
+        toggleProfessorTitular();
+    });
+</script>
+{% endblock %}
+{% endblock %} 

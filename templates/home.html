@@ -3,164 +3,149 @@
 {% block title %}Início - Agenda Escolar{% endblock %}
 
 {% block content %}
-<div class="row">
-    <!-- Estatísticas Rápidas -->
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-primary h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total de Alunos</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_alunos }}</div>
+<div class="container-fluid">
+    <!-- Cards de Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="stats-card">
+                <div class="d-flex align-items-center">
+                    <div class="icon-circle me-3">
+                        <i class="fas fa-user-graduate"></i>
                     </div>
-                    <div class="col-auto">
-                        <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
+                    <div>
+                        <h3>{{ total_alunos }}</h3>
+                        <p class="text-muted">TOTAL DE ALUNOS</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card">
+                <div class="d-flex align-items-center">
+                    <div class="icon-circle me-3">
+                        <i class="fas fa-chalkboard"></i>
+                    </div>
+                    <div>
+                        <h3>{{ total_turmas }}</h3>
+                        <p class="text-muted">TURMAS ATIVAS</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stats-card">
+                <div class="d-flex align-items-center">
+                    <div class="icon-circle me-3">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <div>
+                        <h3>{{ atividades_hoje }}</h3>
+                        <p class="text-muted">ATIVIDADES HOJE</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-success h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Turmas Ativas</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_turmas }}</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-chalkboard fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-info h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Atividades Hoje</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ atividades_hoje }}</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-calendar-day fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-warning h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Comunicados Ativos</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ comunicados_ativos }}</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-bullhorn fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Comunicados Recentes e Atividades -->
-<div class="row">
     <!-- Comunicados Recentes -->
-    <div class="col-lg-6 mb-4">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                <h6 class="m-0 font-weight-bold text-primary">Comunicados Recentes</h6>
-                <a href="{% url 'comunicados' %}" class="btn btn-sm btn-primary">Ver Todos</a>
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="comunicados-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Comunicados Recentes</h5>
+                        <a href="{% url 'comunicados' %}" class="action-link">Ver Todos</a>
+                    </div>
+                    <div class="card-body">
+                        {% if comunicados_recentes %}
+                            {% for comunicado in comunicados_recentes %}
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="icon-circle me-3">
+                                        <i class="fas fa-bullhorn"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">{{ comunicado.titulo }}</h6>
+                                        <small class="text-muted">{{ comunicado.data_envio|date:"d/m/Y" }}</small>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted mb-0">Nenhum comunicado recente.</p>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                {% if comunicados_recentes %}
-                    {% for comunicado in comunicados_recentes %}
-                        <div class="mb-3">
-                            <div class="small text-gray-500">{{ comunicado.data_envio|date:"d/m/Y" }}</div>
-                            <h5>{{ comunicado.titulo }}</h5>
-                            <p class="mb-0">{{ comunicado.conteudo|truncatewords:30 }}</p>
-                        </div>
-                        {% if not forloop.last %}<hr>{% endif %}
-                    {% endfor %}
-                {% else %}
-                    <p class="mb-0">Nenhum comunicado recente.</p>
-                {% endif %}
+        </div>
+
+        <!-- Atividades do Dia -->
+        <div class="col-md-6">
+            <div class="atividades-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Atividades do Dia</h5>
+                        <a href="{% url 'atividades' %}" class="action-link">Ver Todas</a>
+                    </div>
+                    <div class="card-body">
+                        {% if atividades_do_dia %}
+                            {% for atividade in atividades_do_dia %}
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="icon-circle me-3">
+                                        <i class="fas fa-calendar-check"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">{{ atividade.tipo }} - {{ atividade.turma }}</h6>
+                                        <small class="text-muted">{{ atividade.hora_inicio|time:"H:i" }} - {{ atividade.hora_fim|time:"H:i" }}</small>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted mb-0">Nenhuma atividade programada para hoje.</p>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Atividades do Dia -->
-    <div class="col-lg-6 mb-4">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                <h6 class="m-0 font-weight-bold text-primary">Atividades de Hoje</h6>
-                <a href="{% url 'atividades' %}" class="btn btn-sm btn-primary">Ver Todas</a>
-            </div>
-            <div class="card-body">
-                {% if atividades_do_dia %}
-                    {% for atividade in atividades_do_dia %}
-                        <div class="mb-3">
-                            <div class="small text-gray-500">
-                                {{ atividade.hora_inicio|time:"H:i" }} - {{ atividade.hora_fim|time:"H:i" }}
-                            </div>
-                            <h5>{{ atividade.get_tipo_display }} - {{ atividade.turma }}</h5>
-                            <p class="mb-0">{{ atividade.descricao|truncatewords:20 }}</p>
-                        </div>
-                        {% if not forloop.last %}<hr>{% endif %}
-                    {% endfor %}
-                {% else %}
-                    <p class="mb-0">Nenhuma atividade programada para hoje.</p>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Próximos Eventos -->
-<div class="row">
-    <div class="col-12">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Calendário da Semana</h6>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Horário</th>
-                                {% for dia in dias_semana %}
-                                    <th>{{ dia }}</th>
-                                {% endfor %}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for horario in horarios %}
+    <!-- Calendário da Semana -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Calendário da Semana</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table schedule-table mb-0">
+                            <thead>
                                 <tr>
-                                    <td>{{ horario }}</td>
+                                    <th>Horário</th>
                                     {% for dia in dias_semana %}
-                                        <td>
-                                            {% for atividade in atividades_semana %}
-                                                {% if atividade.hora_inicio|time:"H:i" == horario and atividade.data|date:"l" == dia %}
-                                                    <div class="small">
-                                                        <strong>{{ atividade.get_tipo_display }}</strong><br>
-                                                        {{ atividade.turma }}
-                                                    </div>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </td>
+                                        <th>{{ dia }}</th>
                                     {% endfor %}
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {% for horario in horarios %}
+                                    <tr>
+                                        <td>{{ horario }}</td>
+                                        {% for dia in dias_semana %}
+                                            <td>
+                                                {% for atividade in atividades_semana %}
+                                                    {% if atividade.hora_inicio|time:"H:i" == horario and atividade.data|date:"l" == dia %}
+                                                        <div class="p-2 bg-light rounded">
+                                                            <strong>{{ atividade.tipo }}</strong><br>
+                                                            <small>{{ atividade.turma }}</small>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

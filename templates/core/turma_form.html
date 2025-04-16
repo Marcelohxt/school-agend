@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Cabeçalho -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{{ title }}</h1>
+        <a href="{% url 'turmas' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+    </div>
+
+    <!-- Formulário -->
+    <div class="card shadow">
+        <div class="card-body">
+            <form method="post" class="needs-validation" novalidate>
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="row">
+                    <!-- Nome da Turma -->
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.nome.id_for_label }}" class="form-label">Nome da Turma</label>
+                        {% render_field form.nome class="form-control" placeholder="Digite o nome da turma" %}
+                        {% if form.nome.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.nome.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Ano -->
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.ano.id_for_label }}" class="form-label">Ano</label>
+                        {% render_field form.ano class="form-control" %}
+                        {% if form.ano.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.ano.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Período -->
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.periodo.id_for_label }}" class="form-label">Período</label>
+                        {% render_field form.periodo class="form-select" %}
+                        {% if form.periodo.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.periodo.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Professor -->
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.professor.id_for_label }}" class="form-label">Professor</label>
+                        {% render_field form.professor class="form-select" %}
+                        {% if form.professor.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.professor.errors|join:", " }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-3">
+                    <a href="{% url 'turmas' %}" class="btn btn-secondary me-2">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

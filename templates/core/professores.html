@@ -1,0 +1,47 @@
+{% extends 'core/base_list.html' %}
+
+{% block title %}{{ title }} - Agenda Escolar{% endblock %}
+
+{% block table_headers %}
+    <th>Nome</th>
+    <th>Email</th>
+    <th>Telefone</th>
+    <th>Turma</th>
+    <th>Tipo</th>
+    <th>Ações</th>
+{% endblock %}
+
+{% block table_body %}
+    {% for professor in object_list %}
+        <tr>
+            <td>
+                {% if professor.foto %}
+                    <img src="{{ professor.foto.url }}" alt="Foto de {{ professor.nome }}" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                {% endif %}
+                {{ professor.nome }}
+            </td>
+            <td>{{ professor.email }}</td>
+            <td>{{ professor.telefone }}</td>
+            <td>{{ professor.turma.nome|default:"-" }}</td>
+            <td>
+                <span class="badge {% if professor.tipo == 'TITULAR' %}bg-primary{% else %}bg-info{% endif %}">
+                    {{ professor.get_tipo_display }}
+                </span>
+            </td>
+            <td>
+                <div class="btn-group" role="group">
+                    <a href="{% url 'professor_edit' professor.id %}" class="btn btn-warning btn-sm">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{% url 'professor_delete' professor.id %}" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="6" class="text-center">Nenhum professor cadastrado.</td>
+        </tr>
+    {% endfor %}
+{% endblock %} 

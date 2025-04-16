@@ -1,0 +1,324 @@
+/* Baby's Universe Theme */
+
+:root {
+    /* Cores principais */
+    --primary-color: #962b86;      /* Roxo oficial da escola */
+    --primary-dark: #7a226b;       /* Roxo mais escuro para hover */
+    --primary-light: #b235a0;      /* Roxo mais claro para highlights */
+    --secondary-color: #FF69B4;    /* Rosa complementar */
+    --accent-color: #FFD700;       /* Dourado para detalhes */
+    --success-color: #2ECC71;      /* Verde para sucesso */
+    --warning-color: #F1C40F;      /* Amarelo para avisos */
+    --danger-color: #E74C3C;       /* Vermelho para erros */
+    
+    /* Cores neutras */
+    --text-color: #333333;         /* Texto principal */
+    --text-muted: #6C757D;         /* Texto secundário */
+    --light-bg: #F8F9FA;           /* Fundo claro */
+    --white: #FFFFFF;              /* Branco */
+    
+    /* Fontes */
+    --font-family-base: 'Nunito', sans-serif;
+    --font-family-brand: 'Pacifico', cursive;
+}
+
+/* Layout Base */
+body {
+    font-family: var(--font-family-base);
+    color: var(--text-color);
+    background-color: var(--light-bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navbar */
+.navbar {
+    background-color: rgba(150, 43, 134, 0.95) !important;
+    box-shadow: 0 2px 4px rgba(150, 43, 134, 0.2);
+    padding: 0.5rem 1rem;
+}
+
+.navbar-brand {
+    font-family: var(--font-family-brand);
+    font-size: 1.5rem;
+    color: var(--white) !important;
+    padding: 0;
+}
+
+.navbar-brand img {
+    max-height: 40px;
+    width: auto;
+    transition: transform 0.2s ease;
+}
+
+.navbar-brand:hover img {
+    transform: scale(1.05);
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: var(--white);
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: var(--white);
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    min-height: calc(100vh - 56px);
+    padding-top: 0;
+}
+
+.sidebar-logo {
+    max-width: 80%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(150, 43, 134, 0.2);
+}
+
+.sidebar .nav-link {
+    color: var(--text-color);
+    padding: 0.8rem 1rem;
+    margin: 0.2rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.sidebar .nav-link:hover {
+    background-color: var(--light-bg);
+    color: var(--primary-color);
+}
+
+.sidebar .nav-link.active {
+    background-color: var(--primary-color);
+    color: var(--white);
+    box-shadow: 0 2px 4px rgba(150, 43, 134, 0.2);
+}
+
+.sidebar .nav-link i {
+    width: 20px;
+    text-align: center;
+    margin-right: 8px;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+    margin-bottom: 1rem;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.card-header {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-radius: 15px 15px 0 0 !important;
+    border-bottom: none;
+    padding: 1rem;
+}
+
+/* Dashboard Stats */
+.stats-card {
+    background: var(--white);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.stats-card h3 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.stats-card p {
+    color: var(--text-muted);
+    margin-bottom: 0;
+}
+
+/* Tabela de Horários */
+.schedule-table {
+    background: var(--white);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.schedule-table th {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 1rem;
+    font-weight: 600;
+}
+
+.schedule-table td {
+    padding: 1rem;
+    border: 1px solid #e9ecef;
+}
+
+/* Botões */
+.btn {
+    border-radius: 8px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+/* Links e Ações */
+.action-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.action-link:hover {
+    color: #357ABD;
+    text-decoration: none;
+}
+
+/* Alertas e Notificações */
+.alert {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Seção de Comunicados */
+.comunicados-section {
+    margin-bottom: 2rem;
+}
+
+.comunicados-section .card {
+    margin-bottom: 1rem;
+}
+
+.comunicados-section .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Seção de Atividades */
+.atividades-section {
+    margin-bottom: 2rem;
+}
+
+.atividades-section .card {
+    margin-bottom: 1rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .sidebar {
+        min-height: auto;
+    }
+    
+    .stats-card {
+        margin-bottom: 1rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+}
+
+/* Utilitários */
+.text-primary { color: var(--primary-color) !important; }
+.text-secondary { color: var(--secondary-color) !important; }
+.bg-primary { background-color: var(--primary-color) !important; }
+.bg-secondary { background-color: var(--secondary-color) !important; }
+
+/* Footer */
+.footer {
+    margin-top: auto;
+    background-color: var(--white);
+    border-top: 1px solid #e9ecef;
+    padding: 1rem 0;
+}
+
+/* Forms */
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #DFE3E6;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/* Tables */
+.table thead th {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: 1rem;
+}
+
+.table tbody td {
+    vertical-align: middle;
+}
+
+/* Badges */
+.badge {
+    font-weight: 600;
+    padding: 0.5em 1em;
+    border-radius: 6px;
+}
+
+.badge-primary {
+    background-color: var(--primary-color);
+}
+
+.badge-secondary {
+    background-color: var(--secondary-color);
+}
+
+/* Icons */
+.icon-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-color);
+    color: var(--white);
+    box-shadow: 0 2px 4px rgba(150, 43, 134, 0.2);
+}
+
+/* Animations */
+.hover-grow {
+    transition: transform 0.2s ease;
+}
+
+.hover-grow:hover {
+    transform: scale(1.02);
+} 

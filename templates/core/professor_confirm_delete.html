@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="text-center">
+        <div class="error mx-auto" data-text="?">?</div>
+        <p class="lead text-gray-800 mb-4">Confirmar Exclusão</p>
+        <p class="text-gray-500 mb-4">Tem certeza que deseja excluir o professor "{{ professor.nome }}"?</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <a href="{% url 'professores' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Cancelar
+            </a>
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Excluir
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %} 

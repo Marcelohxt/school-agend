@@ -1,88 +1,521 @@
-{% extends 'core/base_form.html' %}
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
 
-{% block title %}{{ title }} - Agenda Escolar{% endblock %}
+{% block content %}
+<style>
+    .campo-obrigatorio::after {
+        content: "*";
+        color: red;
+        margin-left: 4px;
+    }
 
-{% block form_content %}
-    <form method="post" enctype="multipart/form-data" class="space-y-6">
+    .form-control.is-invalid {
+        border-color: #dc3545;
+    }
+
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 80%;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{% if object %}Editar{% else %}Novo{% endif %} Cadastro de Aluno</h2>
+        <a href="{% url 'alunos' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
         {% csrf_token %}
-        
-        <div>
-            <label for="{{ form.nome.id_for_label }}" class="block text-sm font-medium text-gray-700">Nome do Aluno</label>
-            {{ form.nome }}
-            {% if form.nome.errors %}
-                <p class="mt-2 text-sm text-red-600">{{ form.nome.errors }}</p>
-            {% endif %}
-        </div>
 
-        <div>
-            <label for="{{ form.data_nascimento.id_for_label }}" class="block text-sm font-medium text-gray-700">Data de Nascimento</label>
-            {{ form.data_nascimento }}
-            {% if form.data_nascimento.errors %}
-                <p class="mt-2 text-sm text-red-600">{{ form.data_nascimento.errors }}</p>
-            {% endif %}
-        </div>
+        <!-- Dados Pessoais -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Dados do Aluno</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.nome.id_for_label }}" class="form-label campo-obrigatorio">Nome Completo</label>
+                        <input type="text" name="nome" class="form-control"
+                            value="{% if form.nome.value %}{{ form.nome.value }}{% endif %}"
+                            placeholder="Digite o nome completo" required>
+                        {% if form.nome.errors %}
+                        <div class="invalid-feedback d-block">{{ form.nome.errors }}</div>
+                        {% endif %}
+                    </div>
 
-        <div>
-            <label for="{{ form.responsavel.id_for_label }}" class="block text-sm font-medium text-gray-700">Responsável</label>
-            {{ form.responsavel }}
-            {% if form.responsavel.errors %}
-                <p class="mt-2 text-sm text-red-600">{{ form.responsavel.errors }}</p>
-            {% endif %}
-        </div>
-
-        <div>
-            <label for="{{ form.telefone.id_for_label }}" class="block text-sm font-medium text-gray-700">Telefone</label>
-            {{ form.telefone }}
-            {% if form.telefone.errors %}
-                <p class="mt-2 text-sm text-red-600">{{ form.telefone.errors }}</p>
-            {% endif %}
-        </div>
-
-        <div>
-            <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700">Email</label>
-            {{ form.email }}
-            {% if form.email.errors %}
-                <p class="mt-2 text-sm text-red-600">{{ form.email.errors }}</p>
-            {% endif %}
-        </div>
-
-        <div>
-            <label for="{{ form.turma.id_for_label }}" class="block text-sm font-medium text-gray-700">Turma</label>
-            {{ form.turma }}
-            {% if form.turma.errors %}
-                <p class="mt-2 text-sm text-red-600">{{ form.turma.errors }}</p>
-            {% endif %}
-        </div>
-
-        <div>
-            <label for="{{ form.foto.id_for_label }}" class="block text-sm font-medium text-gray-700">Foto do Aluno</label>
-            {{ form.foto }}
-            {% if form.foto.errors %}
-                <p class="mt-2 text-sm text-red-600">{{ form.foto.errors }}</p>
-            {% endif %}
-            {% if form.instance.foto %}
-                <div class="mt-2">
-                    <img src="{{ form.instance.foto.url }}" alt="Foto atual" class="h-32 w-32 object-cover rounded-lg">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.foto.id_for_label }}" class="form-label">Foto do Aluno</label>
+                        <input type="file" name="foto" class="form-control" accept="image/*">
+                        {% if form.foto.value %}
+                        <small class="text-muted">Foto atual: {{ form.foto.value }}</small>
+                        {% endif %}
+                        {% if form.foto.errors %}
+                        <div class="invalid-feedback d-block">{{ form.foto.errors }}</div>
+                        {% endif %}
+                    </div>
                 </div>
-            {% endif %}
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.data_nascimento.id_for_label }}" class="form-label campo-obrigatorio">Data de Nascimento</label>
+                        {{ form.data_nascimento }}
+                        {% if form.data_nascimento.errors %}
+                            <div class="invalid-feedback d-block">{{ form.data_nascimento.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="{{ form.sexo.id_for_label }}" class="form-label campo-obrigatorio">Sexo</label>
+                        {{ form.sexo }}
+                        {% if form.sexo.errors %}
+                            <div class="invalid-feedback d-block">{{ form.sexo.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="{{ form.tipo_sanguineo.id_for_label }}" class="form-label">Tipo Sanguíneo</label>
+                        {{ form.tipo_sanguineo }}
+                        {% if form.tipo_sanguineo.errors %}
+                            <div class="invalid-feedback d-block">{{ form.tipo_sanguineo.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="{{ form.rg.id_for_label }}" class="form-label">RG <span class="text-danger">*</span></label>
+                        {{ form.rg }}
+                        {% if form.rg.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.rg.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="{{ form.cpf.id_for_label }}" class="form-label">CPF <span class="text-danger">*</span></label>
+                        {{ form.cpf }}
+                        {% if form.cpf.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.cpf.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div>
-            <label for="{{ form.observacoes.id_for_label }}" class="block text-sm font-medium text-gray-700">Observações</label>
-            {{ form.observacoes }}
-            {% if form.observacoes.errors %}
-                <p class="mt-2 text-sm text-red-600">{{ form.observacoes.errors }}</p>
-            {% endif %}
+        <!-- Dados do Pai -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">Pai do Aluno</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="{{ form.nome_pai.id_for_label }}" class="form-label">Nome do Pai</label>
+                        {{ form.nome_pai }}
+                        {% if form.nome_pai.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.nome_pai.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="{{ form.telefone_pai.id_for_label }}" class="form-label">Telefone do Pai</label>
+                        {{ form.telefone_pai }}
+                        {% if form.telefone_pai.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.telefone_pai.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label for="{{ form.profissao_pai.id_for_label }}" class="form-label">Profissão do Pai</label>
+                        {{ form.profissao_pai }}
+                        {% if form.profissao_pai.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.profissao_pai.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="{{ form.estado_civil_pai.id_for_label }}" class="form-label">Estado Civil do Pai</label>
+                        {{ form.estado_civil_pai }}
+                        {% if form.estado_civil_pai.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.estado_civil_pai.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="flex justify-end space-x-4 pt-4">
-            <a href="{% url 'aluno_list' %}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
-                Cancelar
-            </a>
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-                Salvar
+        <!-- Dados da Mãe -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">Mãe do Aluno</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="{{ form.nome_mae.id_for_label }}" class="form-label">Nome da Mãe</label>
+                        {{ form.nome_mae }}
+                        {% if form.nome_mae.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.nome_mae.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="{{ form.telefone_mae.id_for_label }}" class="form-label">Telefone da Mãe</label>
+                        {{ form.telefone_mae }}
+                        {% if form.telefone_mae.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.telefone_mae.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label for="{{ form.profissao_mae.id_for_label }}" class="form-label">Profissão da Mãe</label>
+                        {{ form.profissao_mae }}
+                        {% if form.profissao_mae.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.profissao_mae.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="{{ form.estado_civil_mae.id_for_label }}" class="form-label">Estado Civil da Mãe</label>
+                        {{ form.estado_civil_mae }}
+                        {% if form.estado_civil_mae.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.estado_civil_mae.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Endereço -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Endereço</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="{{ form.cep.id_for_label }}" class="form-label">CEP</label>
+                        {{ form.cep }}
+                        {% if form.cep.errors %}
+                            <div class="invalid-feedback d-block">{{ form.cep.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-7 mb-3">
+                        <label for="{{ form.logradouro.id_for_label }}" class="form-label">Logradouro</label>
+                        {{ form.logradouro }}
+                        {% if form.logradouro.errors %}
+                            <div class="invalid-feedback d-block">{{ form.logradouro.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-2 mb-3">
+                        <label for="{{ form.numero.id_for_label }}" class="form-label">Número</label>
+                        {{ form.numero }}
+                        {% if form.numero.errors %}
+                            <div class="invalid-feedback d-block">{{ form.numero.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.complemento.id_for_label }}" class="form-label">Complemento</label>
+                        <input type="text" name="complemento" class="form-control"
+                            value="{% if form.complemento.value %}{{ form.complemento.value }}{% endif %}"
+                            placeholder="Apto, Bloco, etc">
+                        {% if form.complemento.errors %}
+                        <div class="invalid-feedback d-block">{{ form.complemento.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.bairro.id_for_label }}" class="form-label">Bairro</label>
+                        <input type="text" name="bairro" class="form-control"
+                            value="{% if form.bairro.value %}{{ form.bairro.value }}{% endif %}"
+                            placeholder="Nome do bairro">
+                        {% if form.bairro.errors %}
+                        <div class="invalid-feedback d-block">{{ form.bairro.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="{{ form.cidade.id_for_label }}" class="form-label">Cidade</label>
+                        <input type="text" name="cidade" class="form-control"
+                            value="{% if form.cidade.value %}{{ form.cidade.value }}{% endif %}"
+                            placeholder="Nome da cidade">
+                        {% if form.cidade.errors %}
+                        <div class="invalid-feedback d-block">{{ form.cidade.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-1 mb-3">
+                        <label for="{{ form.estado.id_for_label }}" class="form-label">UF</label>
+                        <input type="text" name="estado" class="form-control"
+                            value="{% if form.estado.value %}{{ form.estado.value }}{% endif %}" placeholder="UF"
+                            maxlength="2">
+                        {% if form.estado.errors %}
+                        <div class="invalid-feedback d-block">{{ form.estado.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dados de Contato -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Pessoas Autorizadas</h5>
+            </div>
+            <div class="card-body">
+                {{ formset.management_form }}
+                <div id="formset-container">
+                    {% for form in formset %}
+                    <div class="row mb-3 formset-row">
+                        <div class="col-md-3">
+                            <label class="form-label campo-obrigatorio">Nome</label>
+                            {{ form.nome }}
+                            {{ form.nome.errors }}
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label campo-obrigatorio">Telefone</label>
+                            {{ form.telefone }}
+                            {{ form.telefone.errors }}
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">CPF</label>
+                            {{ form.cpf }}
+                            {{ form.cpf.errors }}
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">RG</label>
+                            {{ form.rg }}
+                            {{ form.rg.errors }}
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label campo-obrigatorio">Parentesco</label>
+                            {{ form.parentesco }}
+                            {{ form.parentesco.errors }}
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Documento</label>
+                            {{ form.documento }}
+                            {{ form.documento.errors }}
+                        </div>
+                        <div class="col-md-1">
+                            <label class="form-label">Foto</label>
+                            {{ form.foto }}
+                            {{ form.foto.errors }}
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Observações</label>
+                            {{ form.observacoes }}
+                            {{ form.observacoes.errors }}
+                        </div>
+                        <div class="col-md-1 d-flex align-items-end">
+                            <button type="button" class="btn btn-danger remove-row" style="display: none;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            {{ form.DELETE }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button type="button" class="btn btn-success" id="add-row">
+                            <i class="fas fa-plus"></i> Adicionar Pessoa Autorizada
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Turma e Professor -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Turma e Professor</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.turma.id_for_label }}" class="form-label">Turma</label>
+                        {{ form.turma }}
+                        {% if form.turma.errors %}
+                            <div class="invalid-feedback d-block">{{ form.turma.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.professor_titular.id_for_label }}" class="form-label">Professor Titular</label>
+                        {{ form.professor_titular }}
+                        {% if form.professor_titular.errors %}
+                            <div class="invalid-feedback d-block">{{ form.professor_titular.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label for="{{ form.professor_auxiliar.id_for_label }}" class="form-label">Professor Auxiliar</label>
+                        {{ form.professor_auxiliar }}
+                        {% if form.professor_auxiliar.errors %}
+                            <div class="invalid-feedback d-block">{{ form.professor_auxiliar.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <div class="form-check">
+                            {{ form.ativo }}
+                            <label class="form-check-label" for="{{ form.ativo.id_for_label }}">
+                                Aluno Ativo
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botões -->
+        <div class="d-flex justify-content-end mb-4">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Salvar
             </button>
         </div>
     </form>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Máscaras para campos
+        $('.cpf-mask').mask('000.000.000-00');
+        $('.rg-mask').mask('00.000.000-0');
+        $('.telefone-mask').mask('(00) 00000-0000');
+        $('.data-mask').mask('00/00/0000');
+        $('.cep-mask').mask('00000-000');
+
+        // Máscaras para telefones dos pais
+        $('#id_telefone_pai').mask('(00) 00000-0000');
+        $('#id_telefone_mae').mask('(00) 00000-0000');
+
+        // Busca de CEP
+        $('#id_cep').on('blur', function() {
+            var cep = $(this).val().replace(/\D/g, '');
+            if (cep.length === 8) {
+                $.get(`https://viacep.com.br/ws/${cep}/json/`, function(data) {
+                    if (!data.erro) {
+                        $('#id_logradouro').val(data.logradouro);
+                        $('#id_bairro').val(data.bairro);
+                        $('#id_cidade').val(data.localidade);
+                        $('#id_estado').val(data.uf);
+                    }
+                });
+            }
+        });
+
+        // Função para buscar endereço pelo CEP
+        function buscarEndereco(cep) {
+            cep = cep.replace(/\D/g, '');
+            if (cep.length === 8) {
+                $.get(`https://viacep.com.br/ws/${cep}/json/`, function(data) {
+                    if (!data.erro) {
+                        $('#id_logradouro').val(data.logradouro);
+                        $('#id_bairro').val(data.bairro);
+                        $('#id_cidade').val(data.localidade);
+                        $('#id_estado').val(data.uf);
+                    }
+                });
+            }
+        }
+
+        // Evento para buscar endereço quando o CEP mudar
+        $('.cep').on('blur', function() {
+            buscarEndereco($(this).val());
+        });
+
+        // Gerenciamento do formset
+        let totalForms = $('#id_pessoas_autorizadas-TOTAL_FORMS');
+        let formCount = parseInt(totalForms.val());
+        const emptyForm = $('#formset-container .formset-row:first').clone();
+
+        // Função para atualizar os índices dos formulários
+        function updateFormIndexes() {
+            $('.formset-row').each(function(index) {
+                $(this).find('input, select').each(function() {
+                    const name = $(this).attr('name');
+                    if (name) {
+                        $(this).attr('name', name.replace(/-\d+-/, `-${index}-`));
+                        $(this).attr('id', `id_pessoas_autorizadas-${index}-${$(this).attr('name').split('-').pop()}`);
+                    }
+                });
+                $(this).find('.remove-row').show();
+            });
+            totalForms.val(formCount);
+        }
+
+        // Adicionar nova linha
+        $('#add-row').click(function() {
+            const newRow = emptyForm.clone();
+            newRow.find('input').val('');
+            newRow.find('select').val('');
+            newRow.find('.remove-row').show();
+            $('#formset-container').append(newRow);
+            formCount++;
+            updateFormIndexes();
+            
+            // Aplicar máscaras nos novos campos
+            newRow.find('.cpf').mask('000.000.000-00');
+            newRow.find('.rg').mask('00.000.000-0');
+            newRow.find('.telefone').mask('(00) 00000-0000');
+        });
+
+        // Remover linha
+        $(document).on('click', '.remove-row', function() {
+            $(this).closest('.formset-row').remove();
+            formCount--;
+            updateFormIndexes();
+        });
+
+        // Mostrar botão de remover para todas as linhas exceto a primeira
+        $('.formset-row:not(:first) .remove-row').show();
+
+        // Validação do formulário
+        $('form').on('submit', function(e) {
+            let isValid = true;
+            $('.required').each(function() {
+                if (!$(this).val()) {
+                    isValid = false;
+                    $(this).addClass('is-invalid');
+                } else {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+            if (!isValid) {
+                e.preventDefault();
+                alert('Por favor, preencha todos os campos obrigatórios.');
+            }
+        });
+    });
+</script>
 {% endblock %}
- 

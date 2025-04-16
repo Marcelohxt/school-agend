@@ -1,45 +1,44 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">{{ title }}</h1>
-        <a href="{% url create_url %}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-            <i class="fas fa-plus mr-2"></i>{{ create_text }}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{{ title }}</h1>
+        <a href="{% url create_url %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>{{ create_text }}
         </a>
     </div>
 
     {% if messages %}
     <div class="mb-4">
         {% for message in messages %}
-        <div class="p-4 rounded {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+        <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %}">
             {{ message }}
         </div>
         {% endfor %}
     </div>
     {% endif %}
 
-    <div class="bg-white shadow-md rounded-lg overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    {% block table_headers %}
-                    {% for header in headers %}
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {{ header }}
-                    </th>
-                    {% endfor %}
-                    {% endblock %}
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Ações
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                {% block table_body %}
-                {% endblock %}
-            </tbody>
-        </table>
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            {% block table_headers %}
+                            {% for header in headers %}
+                            <th>{{ header }}</th>
+                            {% endfor %}
+                            {% endblock %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% block table_body %}
+                        {% endblock %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %} 

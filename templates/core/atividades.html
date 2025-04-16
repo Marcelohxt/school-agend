@@ -1,0 +1,36 @@
+{% extends 'core/base_list.html' %}
+
+{% block title %}{{ title }} - Agenda Escolar{% endblock %}
+
+{% block table_headers %}
+    <th>Data</th>
+    <th>Hora</th>
+    <th>Título</th>
+    <th>Turma</th>
+    <th>Ações</th>
+{% endblock %}
+
+{% block table_body %}
+    {% for atividade in object_list %}
+        <tr>
+            <td>{{ atividade.data|date:"d/m/Y" }}</td>
+            <td>{{ atividade.hora_inicio|time:"H:i" }} - {{ atividade.hora_fim|time:"H:i" }}</td>
+            <td>{{ atividade.titulo }}</td>
+            <td>{{ atividade.turma.nome }}</td>
+            <td>
+                <div class="btn-group" role="group">
+                    <a href="{% url 'atividade_edit' atividade.id %}" class="btn btn-warning btn-sm">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{% url 'atividade_delete' atividade.id %}" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="5" class="text-center">Nenhuma atividade cadastrada.</td>
+        </tr>
+    {% endfor %}
+{% endblock %} 

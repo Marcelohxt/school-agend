@@ -2,11 +2,21 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from datetime import datetime, timedelta
-from .models import Turma, Aluno, Atividade, Comunicado
+from .models import Turma, Aluno, Atividade, Comunicado, Professor, PessoaAutorizada
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
-from .forms import TurmaForm, AlunoForm, AtividadeForm, ComunicadoForm
+from .forms import TurmaForm, AlunoForm, AtividadeForm, ComunicadoForm, ProfessorForm, PessoaAutorizadaForm
+from django.forms import inlineformset_factory
+
+# Configuração do formset para pessoas autorizadas
+PessoaAutorizadaFormSet = inlineformset_factory(
+    Aluno, 
+    PessoaAutorizada,
+    form=PessoaAutorizadaForm,
+    extra=1,
+    can_delete=True
+)
 
 @login_required
 def test_view(request):
@@ -127,29 +137,46 @@ def turma_delete(request, pk):
 
 @login_required
 def alunos(request):
+    # Obtém os parâmetros de pesquisa
+    nome = request.GET.get('nome', '')
+    turma_id = request.GET.get('turma', '')
+    
+    # Inicia a query com todos os alunos
     alunos = Aluno.objects.all()
-    return render(request, 'alunos.html', {'alunos': alunos})
+    
+    # Aplica os filtros se existirem
+    if nome:
+        alunos = alunos.filter(nome__icontains=nome)
+    if turma_id:
+        alunos = alunos.filter(turma_id=turma_id)
+    
+    # Obtém todas as turmas para o select
+    turmas = Turma.objects.all()
+    
+    context = {
+        'object_list': alunos,
+        'title': 'Alunos',
+        'create_url': 'aluno_create',
+        'create_text': 'Novo Aluno',
+        'headers': ['Nome', 'Data de Nascimento', 'Turma', 'Responsável', 'Telefone', 'Status', 'Ações'],
+        'turmas': turmas
+    }
+    return render(request, 'core/alunos.html', context)
 
 @login_required
 def aluno_create(request):
     if request.method == 'POST':
         form = AlunoForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Aluno criado com sucesso!')
+            aluno = form.save()
+            messages.success(request, 'Aluno cadastrado com sucesso!')
             return redirect('alunos')
         else:
             messages.error(request, 'Por favor, corrija os erros abaixo.')
     else:
         form = AlunoForm()
     
-    context = {
-        'form': form,
-        'title': 'Novo Aluno',
-        'turmas': Turma.objects.all(),
-        'list_url': 'alunos'
-    }
-    return render(request, 'core/aluno_form.html', context)
+    return render(request, 'core/aluno_form.html', {'form': form})
 
 @login_required
 def aluno_edit(request, pk):
@@ -157,7 +184,7 @@ def aluno_edit(request, pk):
     if request.method == 'POST':
         form = AlunoForm(request.POST, request.FILES, instance=aluno)
         if form.is_valid():
-            form.save()
+            aluno = form.save()
             messages.success(request, 'Aluno atualizado com sucesso!')
             return redirect('alunos')
         else:
@@ -165,13 +192,7 @@ def aluno_edit(request, pk):
     else:
         form = AlunoForm(instance=aluno)
     
-    context = {
-        'form': form,
-        'title': 'Editar Aluno',
-        'turmas': Turma.objects.all(),
-        'list_url': 'alunos'
-    }
-    return render(request, 'core/aluno_form.html', context)
+    return render(request, 'core/aluno_form.html', {'form': form, 'aluno': aluno})
 
 @login_required
 def aluno_delete(request, pk):
@@ -180,12 +201,19 @@ def aluno_delete(request, pk):
         aluno.delete()
         messages.success(request, 'Aluno excluído com sucesso!')
         return redirect('alunos')
-    return render(request, 'aluno_confirm_delete.html', {'aluno': aluno})
+    return render(request, 'core/aluno_confirm_delete.html', {'aluno': aluno})
 
 @login_required
 def atividades(request):
     atividades = Atividade.objects.all().order_by('data', 'hora_inicio')
-    return render(request, 'atividades.html', {'atividades': atividades})
+    context = {
+        'object_list': atividades,
+        'title': 'Atividades',
+        'create_url': 'atividade_create',
+        'create_text': 'Nova Atividade',
+        'headers': ['Data', 'Hora', 'Título', 'Turma', 'Ações']
+    }
+    return render(request, 'core/atividades.html', context)
 
 @login_required
 def atividade_create(request):
@@ -195,9 +223,17 @@ def atividade_create(request):
             form.save()
             messages.success(request, 'Atividade criada com sucesso!')
             return redirect('atividades')
+        else:
+            messages.error(request, 'Por favor, corrija os erros abaixo.')
     else:
         form = AtividadeForm()
-    return render(request, 'atividade_form.html', {'form': form, 'title': 'Nova Atividade'})
+    
+    context = {
+        'form': form,
+        'title': 'Nova Atividade',
+        'list_url': 'atividades'
+    }
+    return render(request, 'core/atividade_form.html', context)
 
 @login_required
 def atividade_edit(request, pk):
@@ -208,9 +244,21 @@ def atividade_edit(request, pk):
             form.save()
             messages.success(request, 'Atividade atualizada com sucesso!')
             return redirect('atividades')
+        else:
+            messages.error(request, 'Por favor, corrija os erros abaixo.')
     else:
+        # Formatando as datas e horas para o formato brasileiro
+        atividade.data = atividade.data.strftime('%Y-%m-%d')
+        atividade.hora_inicio = atividade.hora_inicio.strftime('%H:%M')
+        atividade.hora_fim = atividade.hora_fim.strftime('%H:%M')
         form = AtividadeForm(instance=atividade)
-    return render(request, 'atividade_form.html', {'form': form, 'title': 'Editar Atividade'})
+    
+    context = {
+        'form': form,
+        'title': 'Editar Atividade',
+        'list_url': 'atividades'
+    }
+    return render(request, 'core/atividade_form.html', context)
 
 @login_required
 def atividade_delete(request, pk):
@@ -224,7 +272,14 @@ def atividade_delete(request, pk):
 @login_required
 def comunicados(request):
     comunicados = Comunicado.objects.all().order_by('-data_envio')
-    return render(request, 'comunicados.html', {'comunicados': comunicados})
+    context = {
+        'object_list': comunicados,
+        'title': 'Comunicados',
+        'create_url': 'comunicado_create',
+        'create_text': 'Novo Comunicado',
+        'headers': ['Data', 'Título', 'Turma', 'Validade', 'Status']
+    }
+    return render(request, 'core/comunicados.html', context)
 
 @login_required
 def comunicado_create(request):
@@ -236,9 +291,17 @@ def comunicado_create(request):
             comunicado.save()
             messages.success(request, 'Comunicado criado com sucesso!')
             return redirect('comunicados')
+        else:
+            messages.error(request, 'Por favor, corrija os erros abaixo.')
     else:
         form = ComunicadoForm()
-    return render(request, 'comunicado_form.html', {'form': form, 'title': 'Novo Comunicado'})
+    
+    context = {
+        'form': form,
+        'title': 'Novo Comunicado',
+        'list_url': 'comunicados'
+    }
+    return render(request, 'core/comunicado_form.html', context)
 
 @login_required
 def comunicado_edit(request, pk):
@@ -249,9 +312,17 @@ def comunicado_edit(request, pk):
             form.save()
             messages.success(request, 'Comunicado atualizado com sucesso!')
             return redirect('comunicados')
+        else:
+            messages.error(request, 'Por favor, corrija os erros abaixo.')
     else:
         form = ComunicadoForm(instance=comunicado)
-    return render(request, 'comunicado_form.html', {'form': form, 'title': 'Editar Comunicado'})
+    
+    context = {
+        'form': form,
+        'title': 'Editar Comunicado',
+        'list_url': 'comunicados'
+    }
+    return render(request, 'core/comunicado_form.html', context)
 
 @login_required
 def comunicado_delete(request, pk):
@@ -281,3 +352,65 @@ def profile(request):
 @login_required
 def settings(request):
     return render(request, 'settings.html')
+
+@login_required
+def professores(request):
+    professores = Professor.objects.all()
+    context = {
+        'object_list': professores,
+        'title': 'Professores',
+        'create_url': 'professor_create',
+        'create_text': 'Novo Professor',
+        'headers': ['Nome', 'Email', 'Telefone', 'Turma', 'Tipo', 'Ações']
+    }
+    return render(request, 'core/professores.html', context)
+
+@login_required
+def professor_create(request):
+    if request.method == 'POST':
+        form = ProfessorForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Professor cadastrado com sucesso!')
+            return redirect('professores')
+        else:
+            messages.error(request, 'Por favor, corrija os erros abaixo.')
+    else:
+        form = ProfessorForm()
+    
+    context = {
+        'form': form,
+        'title': 'Novo Professor',
+        'list_url': 'professores'
+    }
+    return render(request, 'core/professor_form.html', context)
+
+@login_required
+def professor_edit(request, pk):
+    professor = get_object_or_404(Professor, pk=pk)
+    if request.method == 'POST':
+        form = ProfessorForm(request.POST, request.FILES, instance=professor)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Professor atualizado com sucesso!')
+            return redirect('professores')
+        else:
+            messages.error(request, 'Por favor, corrija os erros abaixo.')
+    else:
+        form = ProfessorForm(instance=professor)
+    
+    context = {
+        'form': form,
+        'title': 'Editar Professor',
+        'list_url': 'professores'
+    }
+    return render(request, 'core/professor_form.html', context)
+
+@login_required
+def professor_delete(request, pk):
+    professor = get_object_or_404(Professor, pk=pk)
+    if request.method == 'POST':
+        professor.delete()
+        messages.success(request, 'Professor excluído com sucesso!')
+        return redirect('professores')
+    return render(request, 'core/professor_confirm_delete.html', {'professor': professor})
